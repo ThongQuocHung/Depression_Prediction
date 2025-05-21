@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kết quả dự đoán trầm cảm</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-top: 20px;
+            padding-bottom: 50px;
+        }
+        .card {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            border: none;
+        }
+        .card-header {
+            background-color: #4a6eb5;
+            color: white;
+            border-radius: 10px 10px 0 0 !important;
+        }
+        .result-box {
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .result-depression {
+            background-color: #f8d7da;
+            border: 1px solid #f5c2c7;
+        }
+        .result-no-depression {
+            background-color: #d1e7dd;
+            border: 1px solid #badbcc;
+        }
+        .btn-primary {
+            background-color: #4a6eb5;
+            border-color: #4a6eb5;
+        }
+        .btn-primary:hover {
+            background-color: #3d5d99;
+            border-color: #3d5d99;
+        }
+        .info-row {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .info-label {
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <h1 class="display-5 fw-bold text-primary">KẾT QUẢ DỰ ĐOÁN</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h4 class="mb-0">Kết quả phân tích</h4>
+                    </div>
+                    <div class="card-body">
+                        {% if prediction == "Depression" %}
+                        <div class="result-box result-depression">
+                            <h2 class="text-danger mb-3">Có nguy cơ trầm cảm</h2>
+                            <p class="mb-0">Kết quả phân tích cho thấy bạn có thể đang gặp phải vấn đề về trầm cảm. Mô hình này chỉ mang tính tham khảo, hãy tìm gặp chuyên gia để được tư vấn chi tiết.</p>
+                        </div>
+                        {% else %}
+                        <div class="result-box result-no-depression">
+                            <h2 class="text-success mb-3">Không có dấu hiệu trầm cảm</h2>
+                            <p class="mb-0">Kết quả phân tích cho thấy bạn không có dấu hiệu của trầm cảm. Tuy nhiên, hãy luôn quan tâm đến sức khỏe tinh thần của mình.</p>
+                        </div>
+                        {% endif %}
+
+                        <h5 class="mt-4 mb-3">Thông tin đã nhập</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="info-row">
+                                    <span class="info-label">Họ và tên:</span>
+                                    <span class="info-value">{{ data.name }}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Tuổi:</span>
+                                    <span class="info-value">{{ data.age }}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Giới tính:</span>
+                                    <span class="info-value">{{ data.gender }}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Thành phố:</span>
+                                    <span class="info-value">{{ data.city }}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Nghề nghiệp:</span>
+                                    <span class="info-value">{{ data.profession }}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Trạng thái:</span>
+                                    <span class="info-value">{{ data.work_status }}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">CGPA/Điểm trung bình:</span>
+                                    <span class="info-value">{{ data.cgpa }}</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-row">
+                                    <span class="info-label">Số giờ làm việc/học tập:</span>
+                                    <span class="info-value">{{ data.work_study_hours }}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Áp lực học tập:</span>
+                                    <span class="info-value">{{ data.academic_pressure }}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Áp lực công việc:</span>
+                                    <span class="info-value">{{ data.work_pressure }}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Mức độ hài lòng về việc học:</span>
+                                    <span class="info-value">{{ data.study_satisfaction }}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Mức độ hài lòng về công việc:</span>
+                                    <span class="info-value">{{ data.job_satisfaction }}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Ý định tự tử:</span>
+                                    <span class="info-value">{{ data.suicidal_thoughts }}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Áp lực tài chính:</span>
+                                    <span class="info-value">{{ data.financial_stress }}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Lịch sử bệnh tâm thần trong gia đình:</span>
+                                    <span class="info-value">{{ data.family_history }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer text-center">
+                        <a href="/download/{{ filename }}" class="btn btn-success me-2">
+                            <i class="bi bi-download"></i> Tải xuống kết quả (Excel)
+                        </a>
+                        <a href="/" class="btn btn-primary">
+                            <i class="bi bi-arrow-left"></i> Quay lại trang chủ
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if prediction == "Depression" %}
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="mb-0">Lời khuyên</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-warning" role="alert">
+                            <h5>Quan trọng!</h5>
+                            <p>Đây chỉ là kết quả dự đoán từ mô hình máy học và không thay thế cho chẩn đoán y tế chuyên nghiệp. Nếu bạn đang gặp khó khăn về sức khỏe tinh thần, vui lòng tìm kiếm sự hỗ trợ từ chuyên gia y tế.</p>
+                        </div>
+                        
+                        <h5>Các bước tiếp theo:</h5>
+                        <ul>
+                            <li>Tham khảo ý kiến bác sĩ tâm lý hoặc chuyên gia tâm thần</li>
+                            <li>Chia sẻ cảm xúc với người thân hoặc bạn bè tin cậy</li>
+                            <li>Tìm hiểu về các phương pháp giảm stress và tự chăm sóc bản thân</li>
+                            <li>Tham gia vào các hoạt động thể chất và duy trì lối sống lành mạnh</li>
+                            <li>Cân nhắc tham gia các nhóm hỗ trợ tâm lý</li>
+                        </ul>
+                        
+                        <h5>Đường dây nóng hỗ trợ tâm lý:</h5>
+                        <p>Nếu bạn đang có ý định tự tử hoặc cần hỗ trợ khẩn cấp, hãy gọi ngay cho đường dây nóng hỗ trợ tâm lý.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

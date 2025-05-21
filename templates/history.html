@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch sử dự đoán</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .table-responsive {
+            overflow-x: auto;
+        }
+        table th {
+            white-space: nowrap;
+            background-color: #4a6eb5;
+            color: white;
+        }
+        .depression-yes {
+            background-color: #f8d7da;
+        }
+        .depression-no {
+            background-color: #d1e7dd;
+        }
+    </style>
+</head>
+<body>
+    {% if records %}
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Họ và tên</th>
+                    <th>Tuổi</th>
+                    <th>Giới tính</th>
+                    <th>Thành phố</th>
+                    <th>Nghề nghiệp</th>
+                    <th>Trạng thái</th>
+                    <th>CGPA</th>
+                    <th>Giờ học/làm</th>
+                    <th>Kết quả</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in records %}
+                <tr class="{% if record.Depression_Prediction == 'Depression' %}depression-yes{% else %}depression-no{% endif %}">
+                    <td>{{ record.Name }}</td>
+                    <td>{{ record.Age }}</td>
+                    <td>{{ record.Gender }}</td>
+                    <td>{{ record.City }}</td>
+                    <td>{{ record.Profession }}</td>
+                    <td>{{ record['Working Professional or Student'] }}</td>
+                    <td>{{ record.CGPA }}</td>
+                    <td>{{ record['Work/Study Hours'] }}</td>
+                    <td>
+                        <span class="badge {% if record.Depression_Prediction == 'Depression' %}bg-danger{% else %}bg-success{% endif %}">
+                            {{ record.Depression_Prediction }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="text-center mb-3">
+        <a href="/download_history" class="btn btn-primary">
+            <i class="bi bi-download"></i> Tải xuống lịch sử (Excel)
+        </a>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <p class="mb-0">Chưa có dữ liệu lịch sử dự đoán.</p>
+    </div>
+    {% endif %}
+</body>
+</html>

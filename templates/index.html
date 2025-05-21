@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dự đoán trầm cảm</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-top: 20px;
+            padding-bottom: 50px;
+        }
+        .card {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            border: none;
+        }
+        .card-header {
+            background-color: #4a6eb5;
+            color: white;
+            border-radius: 10px 10px 0 0 !important;
+        }
+        .btn-primary {
+            background-color: #4a6eb5;
+            border-color: #4a6eb5;
+        }
+        .btn-primary:hover {
+            background-color: #3d5d99;
+            border-color: #3d5d99;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .nav-tabs .nav-link {
+            border: none;
+            color: #495057;
+            font-weight: 600;
+        }
+        .nav-tabs .nav-link.active {
+            color: #4a6eb5;
+            border-bottom: 3px solid #4a6eb5;
+            background-color: transparent;
+        }
+        .nav-tabs {
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <h1 class="display-5 fw-bold text-primary">HỆ THỐNG DỰ ĐOÁN TRẦM CẢM</h1>
+                <p class="lead">Nhập thông tin của bạn để nhận kết quả dự đoán</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active" id="form-tab" data-bs-toggle="tab" href="#form" role="tab" aria-controls="form" aria-selected="true">
+                            <i class="bi bi-clipboard-data"></i> Nhập dữ liệu
+                        </a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="history-tab" data-bs-toggle="tab" href="#history" role="tab" aria-controls="history" aria-selected="false">
+                            <i class="bi bi-clock-history"></i> Lịch sử
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="form" role="tabpanel" aria-labelledby="form-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="mb-0">Biểu mẫu dự đoán</h4>
+                    </div>
+                    <div class="card-body">
+                        <form action="/predict" method="post">
+                            <div class="row">
+                                <!-- Thông tin cá nhân -->
+                                <div class="col-md-12 mb-3">
+                                    <h5>Thông tin cá nhân</h5>
+                                    <hr>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="name">Họ và tên:</label>
+                                        <input type="text" class="form-control" id="name" name="name" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="age">Tuổi:</label>
+                                        <input type="number" class="form-control" id="age" name="age" min="1" max="100" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="gender">Giới tính:</label>
+                                        <select class="form-select" id="gender" name="gender" required>
+                                            <option value="" selected disabled>Chọn giới tính</option>
+                                            {% for value in gender_values %}
+                                            <option value="{{ value }}">{{ value }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="city">Thành phố:</label>
+                                        <select class="form-select" id="city" name="city" required>
+                                            <option value="" selected disabled>Chọn thành phố</option>
+                                            {% for city in city_options %}
+                                            <option value="{{ city }}">{{ city }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="profession">Nghề nghiệp:</label>
+                                        <select class="form-select" id="profession" name="profession" required>
+                                            <option value="" selected disabled>Chọn nghề nghiệp</option>
+                                            {% for profession in profession_options %}
+                                            <option value="{{ profession }}">{{ profession }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <!-- Thông tin học tập/công việc -->
+                                <div class="col-md-12 mt-4 mb-3">
+                                    <h5>Thông tin học tập/công việc</h5>
+                                    <hr>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="work_status">Bạn là:</label>
+                                        <select class="form-select" id="work_status" name="work_status" required>
+                                            <option value="" selected disabled>Chọn trạng thái</option>
+                                            {% for status in professional_status %}
+                                            <option value="{{ status }}">{{ status }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="cgpa">CGPA/Điểm trung bình:</label>
+                                        <input type="number" step="0.01" class="form-control" id="cgpa" name="cgpa" min="0" max="10" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="degree">Bằng cấp:</label>
+                                        <select class="form-select" id="degree" name="degree" required>
+                                            <option value="" selected disabled>Chọn bằng cấp</option>
+                                            {% for degree in degree_options %}
+                                            <option value="{{ degree }}">{{ degree }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>    
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="work_study_hours">Số giờ làm việc/học tập:</label>
+                                        <input type="number" class="form-control" id="work_study_hours" name="work_study_hours" min="0" max="24" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="academic_pressure">Áp lực học tập:</label>
+                                        <select class="form-select" id="academic_pressure" name="academic_pressure" required>
+                                            <option value="" selected disabled>Chọn mức độ áp lực</option>
+                                            {% for level in pressure_levels %}
+                                            <option value="{{ level }}">{{ level }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                
+                                
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="study_satisfaction">Mức độ hài lòng về việc học:</label>
+                                        <select class="form-select" id="study_satisfaction" name="study_satisfaction" required>
+                                            <option value="" selected disabled>Chọn mức độ hài lòng</option>
+                                            {% for level in satisfaction_levels %}
+                                            <option value="{{ level }}">{{ level }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                
+                                
+                                <!-- Thông tin sức khỏe tinh thần -->
+                                <div class="col-md-12 mt-4 mb-3">
+                                    <h5>Thông tin sức khỏe tinh thần</h5>
+                                    <hr>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="suicidal_thoughts">Bạn có từng có ý định tự tử?</label>
+                                        <select class="form-select" id="suicidal_thoughts" name="suicidal_thoughts" required>
+                                            <option value="" selected disabled>Chọn câu trả lời</option>
+                                            {% for value in yes_no_values %}
+                                            <option value="{{ value }}">{{ value }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="sleep_duration">Số giờ ngủ mỗi ngày:</label>
+                                        <input type="number" step="0.5" class="form-control" id="sleep_duration" name="sleep_duration" min="0" max="24" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="dietary_habits">Thói quen ăn uống:</label>
+                                        <select class="form-select" id="dietary_habits" name="dietary_habits" required>
+                                            <option value="" selected disabled>Chọn thói quen ăn uống</option>
+                                            {% for habit in dietary_habits %}
+                                            <option value="{{ habit }}">{{ habit }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="financial_stress">Áp lực tài chính:</label>
+                                        <select class="form-select" id="financial_stress" name="financial_stress" required>
+                                            <option value="" selected disabled>Chọn mức độ áp lực</option>
+                                            {% for level in pressure_levels %}
+                                            <option value="{{ level }}">{{ level }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="family_history">Lịch sử bệnh tâm thần trong gia đình:</label>
+                                        <select class="form-select" id="family_history" name="family_history" required>
+                                            <option value="" selected disabled>Chọn câu trả lời</option>
+                                            {% for value in yes_no_values %}
+                                            <option value="{{ value }}">{{ value }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12 mt-4 text-center">
+                                    <button type="submit" class="btn btn-primary btn-lg px-5">Dự đoán</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">Lịch sử dự đoán</h4>
+                        <a href="/download_history" class="btn btn-sm btn-outline-light">
+                            <i class="bi bi-download"></i> Tải xuống
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <div id="history-loading" class="text-center py-4">
+                                <p>Đang tải lịch sử dự đoán...</p>
+                            </div>
+                            <div id="history-content" style="display: none;">
+                                <!-- Lịch sử sẽ được tải bằng AJAX -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Hiển thị và ẩn các trường phù hợp dựa trên lựa chọn người dùng
+        //document.getElementById('work_status').addEventListener('change', function() {
+            //const workStatus = this.value;
+            //const isStudent = workStatus === 'Student';
+            
+            //const studySatisfaction = document.getElementById('study_satisfaction');
+            //const jobSatisfaction = document.getElementById('job_satisfaction');
+            
+            // Nếu là sinh viên, focus vào mức độ hài lòng về việc học
+            //if (isStudent) {
+                //studySatisfaction.parentElement.parentElement.classList.remove('d-none');
+                //studySatisfaction.required = true;
+                //jobSatisfaction.parentElement.parentElement.classList.add('d-none');
+                //jobSatisfaction.required = false;
+                //jobSatisfaction.value = 'Neutral'; // Giá trị mặc định
+            //} else {
+                //studySatisfaction.parentElement.parentElement.classList.add('d-none');
+                //studySatisfaction.required = false;
+                //studySatisfaction.value = 'Neutral'; // Giá trị mặc định
+                //jobSatisfaction.parentElement.parentElement.classList.remove('d-none');
+                //jobSatisfaction.required = true;
+            //}
+        //});
+        
+        // Tải lịch sử khi chuyển tab
+        document.getElementById('history-tab').addEventListener('click', function() {
+            fetch('/history')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('history-loading').style.display = 'none';
+                    document.getElementById('history-content').style.display = 'block';
+                    document.getElementById('history-content').innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('history-loading').innerHTML = '<p class="text-danger">Không thể tải lịch sử. Vui lòng thử lại sau.</p>';
+                });
+        });
+    </script>
+</body>
+</html>
